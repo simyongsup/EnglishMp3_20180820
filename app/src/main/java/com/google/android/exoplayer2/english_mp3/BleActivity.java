@@ -259,6 +259,7 @@ public class BleActivity extends AppCompatActivity {
     }
 
     private void setSound() {
+
        /* NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !notificationManager.isNotificationPolicyAccessGranted()) {
 

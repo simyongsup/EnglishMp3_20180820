@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.google.android.exoplayer2.english_mp3">
+
+    <!-- 통신관련 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 인터넷 연결 -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 내장 디스크 접근 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 폰상태 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 폰번호 접근 -->
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <!-- 진동 -->
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- 내장 디스크 쓰기 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- FCM -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.SEND" />
+    <!--  -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 부팅후 작업 관련 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="net.dinglisch.android.tasker.PERMISSION_RUN_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!-- 전화걸기 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- 문자일기 -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <!-- 네트워크 변경 이벤트 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- 문자수신관련 -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="23" />
+    <application
+        android:allowBackup="true"
+        android:configChanges="orientation|screenSize"
+        android:icon="@drawable/logo_penut"
+        android:label="@string/application_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DesignDemo"
+        android:windowSoftInputMode="adjustResize|stateHidden">
+
+        <activity
+            android:name="com.google.android.exoplayer2.english_mp3.MainActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http" />
+            <data android:scheme="https" />
+            <data android:scheme="content" />
+            <data android:scheme="asset" />
+            <data android:scheme="file" />
+            <data android:host="*" />
+            <data android:pathPattern=".*\\.exolist\\.json" />
+        </intent-filter>
+        -->
+
+        <!--android:screenOrientation="landscape"  android:launchMode="singleTop"-->
+        <!--<activity
+            android:name="com.google.android.exoplayer2.english_mp3.PlayerSpeedActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:label="@string/application_name"
+            android:theme="@style/PlayerTheme"
+            android:screenOrientation="portrait">
+            &lt;!&ndash;<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>&ndash;&gt;
+            <intent-filter>
+                 &lt;!&ndash; <action android:name="com.google.android.exoplayer.demo.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" /> &ndash;&gt;
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+                <data android:scheme="asset" />
+                <data android:scheme="file" />
+            </intent-filter>
+           &lt;!&ndash; <intent-filter>
+                <action android:name="com.google.android.exoplayer.demo.action.VIEW_LIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>&ndash;&gt;
+        </activity>-->
+
+        <activity
+            android:name="com.google.android.exoplayer2.english_mp3.PlayerSpeedActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name="com.google.android.exoplayer2.english_mp3.startActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name="com.google.android.exoplayer2.english_mp3.BleActivity"
+            android:configChanges="orientation|screenSize" />
+
+
+
+        <activity
+            android:name="com.google.android.exoplayer2.auth.AuthCheckShowActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name="com.google.android.exoplayer2.english_mp3.PopActivity"
+            android:theme="@android:style/Theme.Translucent"
+            android:configChanges="orientation|screenSize"/>
+
+        <receiver android:name="com.google.android.exoplayer2.nw.NotificationReceiver" />
+    </application>
+
+</manifest>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:focusable="true"
+    android:keepScreenOn="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#A4A4A4"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/debug_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:textSize="10sp"
+            android:visibility="gone"
+            tools:ignore="SmallSp" />
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:visibility="visible">
+
+        </WebView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#0A2229"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/ic_arrow"
+                android:onClick="goBack" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="8"
+                android:gravity="left|center"
+                android:hint="타이틀"
+                android:textColor="#ffffff"
+                android:textSize="11sp" />
+
+            <ImageView
+                android:id="@+id/scriptImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/star_empty" />
+
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="8">
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="..."
+                android:padding="5dp"
+                android:textIsSelectable="true"
+                android:textSize="13sp" />
+
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/bottom1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="top|center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/rotation"
+                android:onClick="rotation" />
+
+            <Button
+                android:id="@+id/repeatFrom"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#ccc"
+                android:text="@string/repeat"
+                android:textSize="11sp"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/repeatOff"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="0.5dp"
+                android:layout_weight="1"
+                android:background="#ccc"
+                android:text="@string/repeatOff"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/repeatOne"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="0.5dp"
+                android:layout_weight="1.5"
+                android:background="#ccc"
+                android:text="@string/repeatOne"
+                android:textSize="11sp"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/repeatAll"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="0.5dp"
+                android:layout_weight="1.5"
+                android:background="#ccc"
+                android:text="@string/repeatAll"
+                android:textSize="11sp"
+                android:visibility="visible" />
+
+            <Switch
+                android:id="@+id/scrollYN"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="0.5dp"
+                android:layout_weight="1"
+                android:background="#ccc"
+                android:visibility="visible" />
+
+            <!-- <Button
+                 android:id="@+id/replay"
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+                 android:layout_marginLeft="0.5dp"
+                 android:background="#ccc"
+                 android:text="@string/replay"
+                 android:visibility="invisible" />-->
+
+            <Spinner
+                android:id="@+id/spinner_speeds"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="0.5dp"
+                android:layout_weight="1"
+                android:background="#ccc"
+                android:entries="@array/speeds" />
+
+            <LinearLayout
+                android:id="@+id/controls_root"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/retry_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#ccc"
+                    android:text="@string/retry"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <!-- <Button
+                 android:id="@+id/retry_button"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:background="#ccc"
+                 android:text="@string/retry"
+                 android:visibility="gone" /> -->
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/bottom2"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                android:id="@+id/player_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="true" />
+
+            <!-- <View
+                 android:layout_width="match_parent"
+                 android:layout_height="30dp"
+                 android:background="#efefef" />-->
+
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="application_name">프라임</string>
+    <string name="video">Video</string>
+    <string name="audio">Audio</string>
+    <string name="text">Text</string>
+    <string name="retry">Retry</string>
+    <string name="repeat">A->B\n구간반복</string>
+    <string name="repeatChapter">전체</string>
+    <string name="repeatOne">페이지\n반복</string>
+    <string name="repeatAll">전체목록\n반복</string>
+    <string name="script">SCRIPT</string>
+    <string name="scrollYN">스크롤</string>
+    <string name="content"></string>
+    <string name="rew">REW</string>
+    <string name="fwd">FWD</string>
+    <string name="cont">CONT.</string>
+    <string name="one_plus_one">1+1\nPLAY</string>
+    <string name="speedUp">SPEED \n+</string>
+    <string name="playPause">PLAY</string>
+
+    <string name="speedDown">SPEED \n-</string>
+    <string name="sec_3_minus">-3\nSEC</string>
+    <string name="sec_3_plus">+3\nSEC</string>
+    <string name="divPlay">/ PLAY</string>
+    <string name="APlay">A</string>
+    <string name="BPlay">B</string>
+    <string name="speedGo">SPEED \n1</string>
+    <string name="replay">재생</string>
+    <string name="repeatOff">해제</string>
+    <string name="selection_disabled">Disabled</string>
+    <string name="selection_default">Default</string>
+    <string name="selection_default_none">Default (none)</string>
+    <string name="unexpected_intent_action">Unexpected intent action: <xliff:g id="action">%1$s</xliff:g></string>
+    <string name="enable_random_adaptation">Enable random adaptation</string>
+    <string name="error_drm_not_supported">Protected content not supported on API levels below 18</string>
+    <string name="error_drm_unsupported_scheme">This device does not support the required DRM scheme</string>
+    <string name="error_drm_unknown">An unknown DRM error occurred</string>
+    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+    <string name="error_querying_decoders">Unable to query device decoders</string>
+    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+    <string name="error_unsupported_video">Media includes video tracks, but none are playable by this device</string>
+    <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
+    <string name="storage_permission_denied">Permission to access storage was denied</string>
+    <string name="sample_list_load_error">One or more sample lists failed to load</string>
+    <string name="exo_controls_previous_description">Previous track</string>
+    <string name="exo_controls_next_description">Next track</string>
+    <string name="exo_controls_pause_description">Pause</string>
+    <string name="exo_controls_play_description">Play</string>
+    <string name="exo_controls_stop_description">Stop</string>
+    <string name="exo_controls_rewind_description">Rewind</string>
+    <string name="exo_controls_fastforward_description">Fast forward</string>
+</resources>

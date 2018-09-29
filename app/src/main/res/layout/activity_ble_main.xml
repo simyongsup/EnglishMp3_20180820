@@ -1,34 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2C2C2C"
+    android:gravity="center|top"
+    android:orientation="vertical"
     android:padding="20dp">
 
     <LinearLayout
+        android:layout_weight="9"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="0dp"
+        android:gravity="center|top"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="현재 설정된 모니터링 대상"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/ttt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="18dp" />
 
         <Button
             android:id="@+id/btnSearch"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
             android:background="#585858"
             android:onClick="mOnBluetoothSearch"
-            android:text="페어링 장치 검색 및 저장선택"
+            android:text="모니터링 대상설정"
             android:textColor="#ffffff"
-            android:textSize="20dp"
-            tools:ignore="OnClick" />
+            android:textSize="20dp" />
+
+
+        <TextView
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center|left"
+            android:text="모니터링 대상장비의 블루투스 연결이 끊어지면\n알림음을 발생합니다.\n\n단, 그때 휴대폰의 움직이 있으면 알림음을\n발생하지 않습니다"
+            android:textColor="#ffffff"
+            android:textSize="13dp" />
+
+        <ListView
+            android:layout_weight="3"
+            android:id="@+id/listNotice"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/btn1"
@@ -43,7 +80,7 @@
             <Button
                 android:id="@+id/btn2"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="1"
                 android:background="#f22"
                 android:onClick="ON"
@@ -52,23 +89,20 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/ttt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="18dp" />
-
-
-        <ListView
-            android:id="@+id/listDevice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-
     </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnClose"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="#585858"
+        android:onClick="btnClose"
+        android:text="CLOSE"
+        android:textColor="#ffffff"
+        android:textSize="20dp"/>
+
+
+</LinearLayout>

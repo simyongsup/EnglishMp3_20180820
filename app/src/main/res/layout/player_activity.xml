@@ -34,7 +34,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="70dp"
             android:background="#414141"
             android:gravity="center"
             android:orientation="horizontal">
@@ -59,7 +59,6 @@
                 android:textColor="#ffffff"
                 android:textSize="15sp" />
 
-
             <Button
                 android:id="@+id/sleepBtn"
                 android:layout_width="25dp"
@@ -75,6 +74,7 @@
                 android:id="@+id/setting"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginLeft="8dp"
                 android:background="@drawable/ic_settings1"
                 android:onClick="menuManager" />
 
@@ -82,22 +82,22 @@
                 android:id="@+id/scriptImg"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/star_empty"
-                android:onClick="registerLike"
                 android:scaleType="fitXY" />
 
         </LinearLayout>
 
         <TextView
-            android:visibility="gone"
-            android:textColor="#585858"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:background="#efefef"
             android:id="@+id/sleepTimeText"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:background="#efefef"
+            android:gravity="center"
+            android:textColor="#585858"
+            android:textSize="16sp"
+            android:visibility="gone" />
 
         <ScrollView
             android:id="@+id/scrollView"
@@ -131,10 +131,10 @@
         </ScrollView>
 
         <LinearLayout
-            android:background="#2C2C2C"
             android:id="@+id/bottom_main"
             android:layout_width="match_parent"
             android:layout_height="130dp"
+            android:background="#2C2C2C"
             android:gravity="center"
             android:orientation="vertical">
 

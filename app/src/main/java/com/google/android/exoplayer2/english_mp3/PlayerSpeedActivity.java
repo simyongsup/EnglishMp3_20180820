@@ -46,6 +46,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.SpannableStringBuilder;
@@ -130,14 +131,21 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
     public static final String ACTION_VIEW_LIST = "com.google.android.exoplayer.demo.action.VIEW_LIST";
     public static final String URI_LIST_EXTRA = "uri_list";
     public static final String EXTENSION_LIST_EXTRA = "extension_list";
-    PlayerSpeedActivity playerSpeedActivity;
+    public static PlayerSpeedActivity playerSpeedActivity;
+
+    public static PlayerSpeedActivity getPlayerSpeedActivity() {
+        return playerSpeedActivity;
+    }
+
+    public static void setPlayerSpeedActivity(PlayerSpeedActivity playerSpeedActivity) {
+        PlayerSpeedActivity.playerSpeedActivity = playerSpeedActivity;
+    }
 
     CommonMusicStopDialog cancelYnDialog;
     CommonMp3DownLoadDialog commonMp3DownLoadDialog;
 
     CommonTextHorDialog commonTextHorDialog;
     CommonTextDialog commonTextDialog;
-
 
 
     int backKey = 0;
@@ -147,6 +155,7 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
         DEFAULT_COOKIE_MANAGER = new CookieManager();
         DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
     }
+
     public String textType = "eng";
     private IPlayer player = new PlayerImp(this);
     public boolean continue_playYN = true;
@@ -160,6 +169,7 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
     private LinearLayout bottom_main;
     private LinearLayout bottom_play;
     private LinearLayout bottom_extend;
+    private LinearLayout top_speed;
 
 
     private static float textSize = 0;
@@ -308,8 +318,8 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_IDLE) {
                 Log.d("LOGDA_CALL", "통화종료");
-                if (debugViewHelper != null && debugViewHelper.player != null)
-                    debugViewHelper.player.setPlayWhenReady(true);
+                //if (debugViewHelper != null && debugViewHelper.player != null)
+                //  debugViewHelper.player.setPlayWhenReady(true);
 
             } else if (state == TelephonyManager.CALL_STATE_RINGING) {
                 Log.d("LOGDA_CALL", "전화걸려옴");
@@ -376,7 +386,6 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
     }
 
 
-
     public void playSoundAll() {
         sound_all.start();
     }
@@ -412,6 +421,25 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
         sleepBtn = (Button) findViewById(R.id.sleepBtn);
         AemptyBtn = (Button) findViewById(R.id.aEmpty);
         BemptyBtn = (Button) findViewById(R.id.bEmpty);
+
+        top_speed = (LinearLayout) findViewById(R.id.top_speed);
+        top_speed.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                getPlayer().setSpeed(1);
+                currentSpeed = 1;
+                speedText.setText("speed : 1.0x");
+                return false;
+            }
+        });
+
+        scriptImg.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                registerLike(null);
+                return false;
+            }
+        });
 
         rootView.setOnTouchListener(this);
         rootView.setOnKeyListener(this);
@@ -732,7 +760,6 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
                 new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/EnglishAppData/");
             }
         });
-
 
 
         volumeKey.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1287,6 +1314,7 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
     }
 
     Intent intent;
+
     private void processIntent(Intent intent) {
         this.intent = intent;
         id = intent.getStringExtra("idx");
@@ -1728,7 +1756,7 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
     public void onStop() {
         super.onStop();
         Log.d("LOGDA_STATUS", "onStop");
-        if(backKey == 0){
+        if (backKey == 0) {
             setNoti();
         }
         //releaseAfter23();
@@ -1866,7 +1894,7 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
             mDlg = new ProgressDialog(playerSpeedActivity);
             mDlg.setCancelable(false);
             mDlg.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            mDlg.setMessage("다운로드중 입니다.");
+            mDlg.setMessage("Loading 중입니다.");
             mDlg.show();
         }
     };
@@ -2971,59 +2999,26 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
         return sleepTime;
     }
 
+    public RemoteViews contentview;
+    public NotificationManager mNotificationManager;
+    public NotificationCompat.Builder notification;
 
-    private void setNoti() {
+    public void setNoti() {
+        if (mNotificationManager == null)
+            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannelGroup group1 = new NotificationChannelGroup("channel_group_id", "channel_group_name");
-            notificationManager.createNotificationChannelGroup(group1);
-            NotificationChannel notificationChannel = new NotificationChannel("channel_id", "channel_name", NotificationManager.IMPORTANCE_DEFAULT);
+            mNotificationManager.createNotificationChannelGroup(group1);
+            NotificationChannel notificationChannel = new NotificationChannel("channel_id", "channel_name", NotificationManager.IMPORTANCE_NONE);
             notificationChannel.setDescription("channel description");
             notificationChannel.setGroup("channel_group_id");
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.GREEN);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            notificationManager.createNotificationChannel(notificationChannel);
+            mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
         int notificationId = 111;//new Random().nextInt();
-
-
-        Intent intentAction = new Intent(PlayerSpeedActivity.this, PlayerSpeedActivity.class);
-        intentAction.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent open = PendingIntent.getActivity(this, notificationId, intentAction, PendingIntent.FLAG_ONE_SHOT);
-
-        Intent positive = new Intent(this, NotificationReceiver.class);
-        positive.putExtra("notiID", notificationId);
-        //positive.putExtra("cid", getDivNo());
-        positive.setAction("ON");
-        PendingIntent pIntent_positive = PendingIntent.getBroadcast(this, notificationId, positive, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Intent negative = new Intent(this, NotificationReceiver.class);
-        negative.putExtra("notiID", notificationId);
-        //negative.putExtra("cid", getDivNo());
-        negative.setAction("OFF");
-        PendingIntent pIntent_negative = PendingIntent.getBroadcast(this, notificationId, negative, PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-        Intent xIntent = new Intent(this, NotificationReceiver.class);
-        xIntent.putExtra("notiID", notificationId);
-        xIntent.setAction("DELETE");
-        PendingIntent delete = PendingIntent.getBroadcast(this, notificationId, xIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-        Intent receiptIntent = new Intent(this, NotificationReceiver.class);
-        receiptIntent.putExtra("notiID", notificationId);
-        receiptIntent.setAction("pop_receipt");
-        PendingIntent receipt = PendingIntent.getBroadcast(this, notificationId, receiptIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-        Intent driveIntent = new Intent(this, NotificationReceiver.class);
-        driveIntent.putExtra("notiID", notificationId);
-        driveIntent.setAction("pop_drive");
-        PendingIntent drive = PendingIntent.getBroadcast(this, notificationId, driveIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        android.support.v4.app.NotificationCompat.Builder notification = new android.support.v4.app.NotificationCompat.Builder(PlayerSpeedActivity.this);
+        notification = new NotificationCompat.Builder(PlayerSpeedActivity.this);
         notification.setAutoCancel(false);
         notification.setGroup("GROUP_KEY");
         //notification.setContentTitle("블루투스연결된 장비:\n" );
@@ -3036,24 +3031,51 @@ public class PlayerSpeedActivity extends Activity implements OnKeyListener, OnTo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification.setChannelId("channel_id");
         }
-        notification.setPriority(Notification.PRIORITY_HIGH);
-        //notification.setContentIntent(open);
-        //notification.addAction(new NotificationCompat.Action(R.drawable.logo, "켜기", pIntent_positive));
-        //notification.addAction(new NotificationCompat.Action(R.drawable.logo, "끄기", pIntent_negative));
+        //notification.setPriority(Notification.PRIORITY_LOW);
+        contentview = new RemoteViews(getPackageName(), R.layout.removeview);
 
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //mNotificationManager.notify(notificationId, mNotificationManager.build());
+        Intent openIntent = new Intent(this, NotificationReceiver.class);
+        openIntent.putExtra("notiID", notificationId);
+        openIntent.setAction("OPEN");
+        PendingIntent openPandingIntent = PendingIntent.getBroadcast(this, notificationId, openIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        RemoteViews contentview = new RemoteViews(getPackageName(), R.layout.removeview);
+        Intent playIntent = new Intent(this, NotificationReceiver.class);
+        playIntent.putExtra("notiID", notificationId);
+        playIntent.setAction("PLAY");
+        PendingIntent playPandingIntent = PendingIntent.getBroadcast(this, notificationId, playIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        //타이틀 설정
-        //contentview.setTextViewText(R.id.title, "관리자\n");
-        //contentview.setOnClickPendingIntent(R.id.OnOff, pIntent_positive);
-        contentview.setOnClickPendingIntent(R.id.xx, delete);
-        notification.setContent(contentview);
-        mNotificationManager.notify(notificationId, notification.build());
+        Intent pauseIntent = new Intent(this, NotificationReceiver.class);
+        pauseIntent.putExtra("notiID", notificationId);
+        pauseIntent.setAction("PAUSE");
+        PendingIntent pausePandingIntent = PendingIntent.getBroadcast(this, notificationId, pauseIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        Intent closeIntent = new Intent(this, NotificationReceiver.class);
+        closeIntent.putExtra("notiID", notificationId);
+        closeIntent.setAction("CLOSED");
+        PendingIntent closePandingIntent = PendingIntent.getBroadcast(this, notificationId, closeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        if (debugViewHelper != null) {
+            if (debugViewHelper.player.getPlayWhenReady() == true) {
+                contentview.setViewVisibility(R.id.pause, View.VISIBLE);
+                contentview.setViewVisibility(R.id.play, View.GONE);
+
+            } else {
+                contentview.setViewVisibility(R.id.pause, View.GONE);
+                contentview.setViewVisibility(R.id.play, View.VISIBLE);
+
+            }
+
+            contentview.setOnClickPendingIntent(R.id.open, openPandingIntent);
+            contentview.setOnClickPendingIntent(R.id.play, playPandingIntent);
+            contentview.setOnClickPendingIntent(R.id.pause, pausePandingIntent);
+            contentview.setOnClickPendingIntent(R.id.xClose, closePandingIntent);
+
+            notification.setContent(contentview);
+            notification.setSound(null);
+
+            mNotificationManager.notify(notificationId, notification.build());
+        }
     }
-
 
 
 }

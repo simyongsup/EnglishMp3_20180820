@@ -133,7 +133,7 @@ public class AuthCheckShowActivity extends Activity {
         switch (requestCode) {
             case REQUEST_CODE_SETTING_ACTIVITY:
 
-                System.exit(0);
+                finish();
                 break;
             case OVERLAY_REQUEST:
                 Log.d("CUSTOMER", "OVERLAY_REQUEST~~~~");

@@ -292,7 +292,7 @@ public class JoinWebAsyncTask extends AsyncTask<String, Void, Object> {
     String Save_folder = "/EnglishAppData";
 
     private void getFileDownLoadProcess() {
-        Log.e("LOGDA", "파일다운로드!!!");
+
         // 다운로드 경로를 외장메모리 사용자 지정 폴더로 함.
         File_Name = params[2];
         Save_Path = path + Save_folder;

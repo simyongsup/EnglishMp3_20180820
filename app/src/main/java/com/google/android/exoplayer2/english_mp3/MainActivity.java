@@ -19,16 +19,20 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -40,14 +44,13 @@ import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -74,13 +77,11 @@ import com.google.android.exoplayer2.dialog.CommonPreDataDialog;
 import com.google.android.exoplayer2.dialog.CommonUpdateDialog;
 import com.google.android.exoplayer2.nw.JoinWebAsyncTask;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SensorEventListener {
 
     public static String host = "http://ilove14.cafe24.com/ESTD/ContentsList.php";
     String host_version = "http://ilove14.cafe24.com/ESTD/Info.php";
@@ -113,6 +114,10 @@ public class MainActivity extends Activity {
 
     int PageCnt = 1;
     ImageView home_btn;
+
+    SensorManager mSensorManager;
+    Sensor accel;
+
 
     public void reflesh(View view) {
         PageCnt = 1;
@@ -347,18 +352,13 @@ public class MainActivity extends Activity {
         mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
         mDrawerLayout.closeDrawer(Gravity.LEFT); //CLOSE Nav Drawer!
 
-
-      /*  if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }*/
-        //setNoti();
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accel = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
 
-
-
-
-    public void openWeb(View view){
+    public void openWeb(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.note21c.com"));
         startActivity(intent);
     }
@@ -455,6 +455,11 @@ public class MainActivity extends Activity {
             JoinWebAsyncTask boardAsyncTask = new JoinWebAsyncTask(MainActivity.this, "getVersion");
             boardAsyncTask.execute(host_version, "token=12345", "getVersion");
 
+            TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            manager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+            registerReceiver(mBroadcastReceiverDevice, filter1);
+            registerReceiver(mBroadcastReceiverDevice, filter2);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -774,6 +779,12 @@ public class MainActivity extends Activity {
 
     }
 
+    private long mShakeTime;
+    private static final int SHAKE_SKIP_TIME = 500;
+    private static final float SHAKE_THRESHOLD_GRAVITY = 1.7F;
+
+
+
     public class SimpleStringRecyclerViewAdapter extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
 
         private final TypedValue mTypedValue = new TypedValue();
@@ -902,9 +913,10 @@ public class MainActivity extends Activity {
                 }
             });
 
-            holder.registerLike.setOnClickListener(new View.OnClickListener() {
+            holder.registerLike.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public void onClick(View view) {
+                public boolean onLongClick(View view) {
+
                     downView = holder.downYn;
 
                     if (mValues.get(position).getFavorite_yn() != null && mValues.get(position).getFavorite_yn().equals("Y")) {
@@ -917,7 +929,14 @@ public class MainActivity extends Activity {
                         boardAsyncTask.execute(host_register, "token=12345&UUID_KEY=" + getDevicesUUID() + "&ID=" + mValues.get(position).getIdx(), "registerLike");
                         mValues.get(position).setFavorite_yn("Y");
                     }
+
+                    return false;
                 }
+/*
+                @Override
+                public void onClick(View view) {
+
+                }*/
             });
         }
 
@@ -1043,5 +1062,120 @@ public class MainActivity extends Activity {
         }
     }
 
+
+    boolean Connection = false;
+
+    public boolean isConnection() {
+        return Connection;
+    }
+
+    public void setConnection(boolean connection) {
+        Connection = connection;
+    }
+
+
+    MediaPlayer music;
+    IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+    IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+
+    //브로드캐스트리시버를 이용하여 블루투스 장치가 연결이 되고, 끊기는 이벤트를 받아 올 수 있다.
+    private final BroadcastReceiver mBroadcastReceiverDevice = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            // 장치가 연결이 되었으면
+            switch (action) {
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+
+                    if (!isConnection() && getPreferencesAddress().equals(device.getAddress())) {
+                        Toast.makeText(getApplicationContext(), "장치연결됨 : " + device.getName().toString(), Toast.LENGTH_LONG).show();
+
+                    }
+
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    if (!isConnection() && getPreferencesAddress().equals(device.getAddress())) {
+                        Toast.makeText(getApplicationContext(), "장치연결해제 :" + device.getName().toString(), Toast.LENGTH_LONG).show();
+
+                        music = MediaPlayer.create(getApplicationContext(), R.raw.voice_bell);
+                        music.setLooping(false);
+                        music.start();
+                    }
+
+                    break;
+            }
+        }
+    };
+
+
+    private String getPreferencesAddress() {
+        SharedPreferences pref = getSharedPreferences("ble_pref", MODE_PRIVATE);
+        return pref.getString("address", "") == null ? "" : pref.getString("address", "");
+    }
+
+
+    private String getPreferencesName() {
+        SharedPreferences pref = getSharedPreferences("ble_pref", MODE_PRIVATE);
+        return pref.getString("name", "") == null ? "" : pref.getString("name", "");
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float X = event.values[0];
+            float Y = event.values[1];
+            float Z = event.values[2];
+
+            float gx = X / SensorManager.GRAVITY_EARTH;
+            float gy = Y / SensorManager.GRAVITY_EARTH;
+            float gz = Z / SensorManager.GRAVITY_EARTH;
+
+            Float f = gx * gx + gy * gy + gz * gz;
+            double sq = Math.sqrt(f.doubleValue());
+            float gForce = (float) sq;
+            if (gForce > SHAKE_THRESHOLD_GRAVITY) {
+                long currentTime = System.currentTimeMillis();
+                if (mShakeTime + SHAKE_SKIP_TIME > currentTime) {
+                    return;
+                }
+
+                mShakeTime = currentTime;
+                mShakeTime++;
+
+                Log.d("LOGDA_SHAKE", "감지됨 " + mShakeTime);
+
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
+        public void onCallStateChanged(int state, String incomingNumber) {
+            switch (state) {
+                case TelephonyManager.CALL_STATE_IDLE:
+                    setConnection(false);
+
+                    //Toast.makeText(getApplicationContext(), "통화상태 아님~~~"+incomingNumber, Toast.LENGTH_LONG).show();
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    setConnection(true);
+
+                    //Toast.makeText(getApplicationContext(), "통화중~~~" + incomingNumber, Toast.LENGTH_LONG).show();
+                    break;
+                case TelephonyManager.CALL_STATE_RINGING:
+                    setConnection(false);
+
+                    //Toast.makeText(getApplicationContext(), "전화벨링~~~"+incomingNumber, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
+    };
 
 }

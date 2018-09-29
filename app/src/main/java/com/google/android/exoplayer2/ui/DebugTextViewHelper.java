@@ -374,7 +374,16 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
 
                                     //문장 스크롤링
                                     if (getScrollSettings()) {
-                                        scrollToView(playerSpeedActivity.tvArray[i], scrollView, 0);
+                                        Log.d("LOGDA_ROTATIONM", "문장 스크롤링 i =" + i + "  전체 = " + playerSpeedActivity.tvArray.length);
+                                        if (playerSpeedActivity.LayDown == true) {
+                                            if (i >= playerSpeedActivity.tvArray.length - 1) {
+                                                scrollToView(playerSpeedActivity.tvArray[i], scrollView, 0);
+                                            } else {
+                                                scrollToView(playerSpeedActivity.tvArray[i + 1], scrollView, 0);
+                                            }
+                                        } else {
+                                            scrollToView(playerSpeedActivity.tvArray[i], scrollView, 0);
+                                        }
                                     }
 
                                     //전체 비/반복
@@ -624,6 +633,7 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
         playerSpeedActivity.tvArray[idx].setBackgroundColor(Color.parseColor("#585858"));
 
         if (getScrollSettings() == true) {
+            Log.d("LOGDA_ROTATIONM", "다음문장 스크롤 temp = " + temp);
             scrollToView(playerSpeedActivity.tvArray[temp], scrollView, 0);
         }
 
@@ -817,9 +827,18 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
     public void playFirstSentence() {
 
         player.setPlayWhenReady(true);
-        player.seekTo(playerSpeedActivity.StartTerm[playerSpeedActivity.setGoToBeginingSentenceChangeBackGround(player.getCurrentPosition())] + 1);
 
-        finish = false;
+        //종료후 문장 처음부터 재생
+        if (finish == true) {
+            finish = false;
+            player.seekTo(playerSpeedActivity.StartTerm[playerSpeedActivity.tvArray.length - 1] + 1);
+            Log.d("playFirstSentence", "종료후 재생");
+        } else {
+            //player.seekTo(playerSpeedActivity.StartTerm[playerSpeedActivity.setGoToBeginingSentenceChangeBackGround(player.getCurrentPosition())] + 1);
+            player.seekTo(playerSpeedActivity.StartTerm[index] + 1);
+            Log.d("playFirstSentence", "종료후 재생 아님");
+        }
+
         lockOneRepeatPlay = false;
         lockOneNoRepeatPlay = false;
         BreakingContinue = false;
@@ -995,6 +1014,7 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
     }
 
     int pre_count = 0;
+    int before_top = 0;
 
     public void scrollToView(View view, final ScrollView scrollView, int count) {
         if (view != null && view != scrollView) {
@@ -1004,8 +1024,13 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
                 count += view.getTop() - 100;
 
             } else {
-                Log.d("LOGDA_ROTATIONM", "가로보기");
-                count += view.getTop() + 0;
+                Log.d("LOGDA_ROTATIONM", "가로보기 " + view.getTop());
+                if (view.getTop() > 0) {
+                    //before_top = view.getTop();
+                    count += view.getTop();
+                    //count = before_top;
+                    //Log.d("LOGDA_ROTATIONM", "이전높이 " + before_top);
+                }
 
             }
 
@@ -1064,107 +1089,3 @@ public final class DebugTextViewHelper implements Runnable, ExoPlayer.EventListe
 
 
 }
-
-//전체문장 재생
-/* else if (repeatChapter == false && repeatChapterAll == true) {
-                           for (int i = 0; i < playerSpeedActivity.tvArray.length; ++i) {
-                                playerSpeedActivity.tvArray[i].setBackgroundColor(Color.parseColor("#585858"));
-
-                                if (player.getCurrentPosition() >= playerSpeedActivity.StartTerm[i] && player.getCurrentPosition() <= playerSpeedActivity.EndTerm[i]) {
-
-                                    index = i;
-                                    if (player.getCurrentPosition() + 200 > playerSpeedActivity.EndTerm[i]) {
-
-                                        next_index = i + 1;
-                                        index = next_index;
-                                        if (next_index >= playerSpeedActivity.tvArray.length) {
-                                            next_index = playerSpeedActivity.tvArray.length - 1;
-
-                                            if (player.getDuration() <= player.getCurrentPosition() + 200 && player.getCurrentPosition() > 0 && player.getPlayWhenReady() == true) {
-                                                player.setPlayWhenReady(false);
-                                                if (getSoundSettings())
-                                                    playerSpeedActivity.playSoundAll();
-
-                                                lockRepeatChapterAllAgain();
-
-                                                if (getScrollSettings()) {
-                                                    scrollToView(playerSpeedActivity.tvArray[0], scrollView, 0);
-                                                }
-                                            }
-
-                                        } else {
-                                            if (getScrollSettings()) {
-                                                scrollToView(playerSpeedActivity.tvArray[next_index], scrollView, 0);
-                                            }
-                                            //Log.d("LOGDA", "전체문장 재생 후 반복 pre_index = " + next_index + "  , index = " + index);
-                                            lockRepeatChapterAll();
-                                            player.setPlayWhenReady(false);
-                                            if (getSoundSettings())
-                                                playerSpeedActivity.playSoundOne();
-
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (index >= playerSpeedActivity.tvArray.length) {
-                                index = playerSpeedActivity.tvArray.length - 1;
-                            }
-
-                            playerSpeedActivity.tvArray[index].setBackgroundColor(Color.parseColor("#2E2E2E"));
-
-                        }*/
-//}
-
-
-
-
-                           /* Log.d("LOGDA", "한문장만 재생 후 종료 " +
-                                    " WhenReady = " + player.getPlayWhenReady() +
-                                    " playBtnYN = " + playerSpeedActivity.playBtnYN +
-                                    " getCurrentPosition = " + player.getCurrentPosition() +
-                                    " StartTerm[index] = " + playerSpeedActivity.StartTerm[index] +
-                                    " EndTerm[index] = " + playerSpeedActivity.EndTerm[index]);
-
-                            //플레이 버튼이 눌려 지고 쉬고 있을 때
-                            if (player.getCurrentPosition() + 150 >= playerSpeedActivity.EndTerm[index] &&
-                                    playerSpeedActivity.playBtnYN == true) {
-                                player.seekTo(playerSpeedActivity.StartTerm[index] + 1);
-                                Log.d("LOGDA", " 다시 재생");
-
-                            } else if (player.getCurrentPosition() + 150 < playerSpeedActivity.EndTerm[index] &&
-                                    playerSpeedActivity.playBtnYN == true) {
-                                for (int j = 0; j < playerSpeedActivity.tvArray.length; ++j) {
-                                    playerSpeedActivity.tvArray[j].setBackgroundColor(Color.parseColor("#585858"));
-                                }
-
-                                playerSpeedActivity.tvArray[index].setBackgroundColor(Color.parseColor("#2E2E2E"));
-                                Log.d("LOGDA", "player.getCurrentPosition() + 150 < playerSpeedActivity.EndTerm[index]");
-
-                            } else if (player.getCurrentPosition() + 150 >= playerSpeedActivity.EndTerm[index] &&
-                                    player.getPlayWhenReady() == true &&
-                                    playerSpeedActivity.playBtnYN == true) {
-                                long dis = player.getCurrentPosition() - playerSpeedActivity.EndTerm[index];
-
-                                Log.d("LOGDA", "chapter index  " + index +
-                                        " 시간차 = " + dis +
-                                        " EndTerm = " + playerSpeedActivity.EndTerm[index] +
-                                        " player.getCurrentPosition() " + player.getCurrentPosition());
-
-                                if (dis == 0) {
-                                    playerSpeedActivity.setChapterIndex();
-
-                                } else if (dis > 0) {
-                                    playerSpeedActivity.setChapterIndexDis();
-
-                                } else {
-                                    playerSpeedActivity.setChapterIndex();
-                                }
-
-                                playerSpeedActivity.playBtnYN = false;
-                                player.setPlayWhenReady(false);
-                                playerSpeedActivity.playPause.clearAnimation();
-
-                            } else {
-
-                            }*/

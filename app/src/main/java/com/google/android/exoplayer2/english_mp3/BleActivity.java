@@ -83,8 +83,6 @@ public class BleActivity extends AppCompatActivity {
     public static void setmSocket(BluetoothSocket mSocket) {
         mSocket = mSocket;
     }
-
-    MediaPlayer music;
     AudioManager mAudioManager;
     TextView ttt;
     Button btn1;
@@ -101,13 +99,13 @@ public class BleActivity extends AppCompatActivity {
         ttt = (TextView) findViewById(R.id.ttt);
         ttt.setText("연결장비 : " + getPreferencesName());
 
+        IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(bluetoothReceiverBLEOnOff, filter3);
+        setSound();
         btn1 = (Button) findViewById(R.id.btn1);
         btn2 = (Button) findViewById(R.id.btn2);
 
         checkBluetooth();
-
-
-
     }
 
 
@@ -116,47 +114,30 @@ public class BleActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
-        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
-        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-
-        registerReceiver(mBroadcastReceiverDevice, filter1);
-        registerReceiver(mBroadcastReceiverDevice, filter2);
-        registerReceiver(bluetoothReceiverBLEOnOff, filter3);
-
-        setSound();
-
-        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        manager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-        setNoti();
-
-        btn1 = (Button) findViewById(R.id.btn1);
-        btn2 = (Button) findViewById(R.id.btn2);
-        checkBtnColor();
+        //setNoti();
 
     }
 
+    NotificationManager mNotificationManager;
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void setNoti() {
 
+        if(mNotificationManager == null){
+            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
             NotificationChannelGroup group1 = new NotificationChannelGroup("channel_group_id", "channel_group_name");
-            notificationManager.createNotificationChannelGroup(group1);
+            mNotificationManager.createNotificationChannelGroup(group1);
             NotificationChannel notificationChannel = new NotificationChannel("channel_id", "channel_name", NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel.setDescription("channel description");
             notificationChannel.setGroup("channel_group_id");
-            notificationChannel.enableLights(true);
-            notificationChannel.setLightColor(Color.GREEN);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            notificationManager.createNotificationChannel(notificationChannel);
+            mNotificationManager.createNotificationChannel(notificationChannel);
         }
 
-        int notificationId = 111;//new Random().nextInt();
+        int notificationId = 222;
 
         Intent intentAction = new Intent(bleActivity, BleActivity.class);
         intentAction.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -180,74 +161,40 @@ public class BleActivity extends AppCompatActivity {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(bleActivity);
         notification.setAutoCancel(false);
         notification.setGroup(GROUP_KEY);
-        //notification.setContentTitle("블루투스연결된 장비:\n" + getPreferencesName() + "\n");
-        //notification.setContentText("블루투스 이벤트 장치선택 변경/수정/모니터링");
         notification.setSmallIcon(R.drawable.logo_penut);
         notification.setAutoCancel(false);
         notification.setOngoing(true);
 
-        //notification.setColor(ContextCompat.getColor(bleActivity, colorID));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notification.setChannelId("channel_id");
         }
-        notification.setPriority(Notification.PRIORITY_HIGH);
+
+        //notification.setPriority(Notification.PRIORITY_LOW);
         notification.setContentIntent(open);
-
-
-        //notification.addAction(new NotificationCompat.Action(R.drawable.logo, "켜기", pIntent_positive));
-        //notification.addAction(new NotificationCompat.Action(R.drawable.logo, "끄기", pIntent_negative));
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //mNotificationManager.notify(notificationId, mNotificationManager.build());
 
         contentview = new RemoteViews(getPackageName(), R.layout.removeview_ble);
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+       /* mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null) {
             if (mBluetoothAdapter.isEnabled()) {
-                //contentview.setImageViewResource(R.id.ons, android.R.drawable.ic_delete);
                 contentview.setViewVisibility(R.id.offs, View.VISIBLE);
                 contentview.setViewVisibility(R.id.ons, View.GONE);
 
             } else {
                 contentview.setViewVisibility(R.id.offs, View.GONE);
                 contentview.setViewVisibility(R.id.ons, View.VISIBLE);
-                //contentview.setImageViewResource(R.id.offs, android.R.drawable.ic_lock_power_off);
 
             }
-        }
+        }*/
 
         //타이틀 설정
         contentview.setTextViewText(R.id.title, "블루투스 장비명 : " + getPreferencesName());
         contentview.setOnClickPendingIntent(R.id.closed, pIntent_closed);
-        //contentview.setOnClickPendingIntent(R.id.ons, pIntent_positive);
-        //contentview.setOnClickPendingIntent(R.id.offs, pIntent_negative);
 
         notification.setContent(contentview);
         mNotificationManager.notify(notificationId, notification.build());
     }
 
-    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
-        public void onCallStateChanged(int state, String incomingNumber) {
-            switch (state) {
-                case TelephonyManager.CALL_STATE_IDLE:
-                    setConnection(false);
-                    Log.d(TAG, "통화상태 아님");
-                    //Toast.makeText(getApplicationContext(), "통화상태 아님~~~"+incomingNumber, Toast.LENGTH_LONG).show();
-                    break;
-                case TelephonyManager.CALL_STATE_OFFHOOK:
-                    setConnection(true);
-                    Log.d(TAG, "통화중");
-                    Toast.makeText(getApplicationContext(), "통화중~~~" + incomingNumber, Toast.LENGTH_LONG).show();
-                    break;
-                case TelephonyManager.CALL_STATE_RINGING:
-                    setConnection(false);
-                    Log.d(TAG, "전화벨링");
-                    //Toast.makeText(getApplicationContext(), "전화벨링~~~"+incomingNumber, Toast.LENGTH_LONG).show();
-                    break;
-            }
-        }
-    };
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -301,7 +248,7 @@ public class BleActivity extends AppCompatActivity {
                     btn1.setBackgroundColor(Color.rgb(255, 2, 2));
                     btn2.setBackgroundColor(Color.rgb(255, 255, 255));
                 }
-                setNoti();
+                //setNoti();
                 switch (state) {
                     case BluetoothAdapter.STATE_ON:
                         break;
@@ -314,7 +261,7 @@ public class BleActivity extends AppCompatActivity {
 
                         }
 
-                        Toast.makeText(getApplicationContext(), "블루투스 STATE_TURNING_ON", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "블루투스 STATE_TURNING_ON", Toast.LENGTH_LONG).show();
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
                         Log.i(TAG, "@@@ MYSERVICE 블루투스 STATE_TURNING_OFF ");
@@ -325,7 +272,7 @@ public class BleActivity extends AppCompatActivity {
                         }
 
 
-                        Toast.makeText(getApplicationContext(), "블루투스 STATE_TURNING_OFF", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "블루투스 STATE_TURNING_OFF", Toast.LENGTH_LONG).show();
                         break;
 
                 }
@@ -333,41 +280,6 @@ public class BleActivity extends AppCompatActivity {
         }
     };
 
-
-    //브로드캐스트리시버를 이용하여 블루투스 장치가 연결이 되고, 끊기는 이벤트를 받아 올 수 있다.
-    private final BroadcastReceiver mBroadcastReceiverDevice = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            // 장치가 연결이 되었으면
-
-            switch (action) {
-                case BluetoothDevice.ACTION_ACL_CONNECTED:
-
-                    if (!isConnection() && getPreferencesAddress().equals(device.getAddress())) {
-                        Log.d(TAG, "연결된 장치 : " + device.getName().toString() + device.getAddress().toString());
-                        Toast.makeText(getApplicationContext(), "장치연결됨 : " + device.getName().toString(), Toast.LENGTH_LONG).show();
-
-                    }
-
-                    break;
-                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                    if (!isConnection() && getPreferencesAddress().equals(device.getAddress())) {
-
-                        Log.d(TAG, "연결해제");
-                        Toast.makeText(getApplicationContext(), "장치연결해제 :" + device.getName().toString(), Toast.LENGTH_LONG).show();
-
-                        music = MediaPlayer.create(getApplicationContext(), R.raw.voice_bell);
-                        music.setLooping(false);
-                        music.start();
-                    }
-
-                    break;
-            }
-        }
-    };
 
 
     void checkBluetooth() {
@@ -554,7 +466,7 @@ public class BleActivity extends AppCompatActivity {
     }
 
     private void checkBtnColor() {
-        if (mBluetoothAdapter.isEnabled()) {
+       /* if (mBluetoothAdapter.isEnabled()) {
             //on
             btn1.setBackgroundColor(Color.rgb(255, 255, 255));
             btn2.setBackgroundColor(Color.rgb(255, 2, 2));
@@ -562,8 +474,11 @@ public class BleActivity extends AppCompatActivity {
             //off
             btn1.setBackgroundColor(Color.rgb(255, 2, 2));
             btn2.setBackgroundColor(Color.rgb(255, 255, 255));
-        }
+        }*/
     }
 
 
+    public void btnClose(View view) {
+        finish();
+    }
 }

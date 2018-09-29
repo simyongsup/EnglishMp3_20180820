@@ -9,7 +9,7 @@ import android.widget.Toast;
 public class ClickLongClick implements View.OnClickListener, View.OnLongClickListener {
 
     PlayerSpeedActivity playerSpeedActivity;
-    float currentSpeed = 0;
+    float currentSpeed = 1;
 
     public ClickLongClick(PlayerSpeedActivity playerSpeedActivity) {
         this.playerSpeedActivity = playerSpeedActivity;
@@ -18,16 +18,6 @@ public class ClickLongClick implements View.OnClickListener, View.OnLongClickLis
     @Override
     public void onClick(View view) {
         currentSpeed = playerSpeedActivity.currentSpeed;
-
-      /*  if (playerSpeedActivity.conti == view) {
-            if (playerSpeedActivity.continue_playYN == false) {
-                playerSpeedActivity.continue_playYN = true;
-
-            } else {
-                playerSpeedActivity.continue_playYN = false;
-
-            }
-        } else*/
         if (playerSpeedActivity.speedUp == view) {
             currentSpeed = (float) (currentSpeed + 0.1);
             if (currentSpeed >= 2) {
@@ -193,11 +183,13 @@ public class ClickLongClick implements View.OnClickListener, View.OnLongClickLis
         if (playerSpeedActivity.speedUp == view) {
             playerSpeedActivity.getPlayer().setSpeed(1);
             currentSpeed = 1;
+            playerSpeedActivity.currentSpeed = 1;
             playerSpeedActivity.speedText.setText("speed : 1.0x");
 
         } else if (playerSpeedActivity.speedDown == view) {
             playerSpeedActivity.getPlayer().setSpeed(1);
             currentSpeed = 1;
+            playerSpeedActivity.currentSpeed = 1;
             playerSpeedActivity.speedText.setText("speed : 1.0x");
 
         } else if (playerSpeedActivity.rew == view) {
